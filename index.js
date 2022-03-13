@@ -20,21 +20,22 @@ const userSchema = new mongoose.Schema({
     first_name :{type: String, required:true},
     last_name : {type: String, require: true}
 },{
+    versionKey: false,
     timestamps: true,
 })
 
 //step2 = creating model
-const User = mongoose.model("user", userSchema)
+User = mongoose.model("user", userSchema)
 
 //author
 
 const authorSchema = new mongoose.Schema({
-   userID : {
+   userId : {
        type : mongoose.Schema.Types.ObjectId,
-
        ref: "user"
     }
 },{
+    versionKey: false,
     timestamps: true,
 })
 
@@ -51,6 +52,7 @@ const bookSchema = new mongoose.Schema({
         ref : "user"
     }
 },{
+    versionKey: false,
     timestamps: true,
 })
 
@@ -62,6 +64,7 @@ const sectionSchema = new mongoose.Schema({
     name : {type: String, require: true},
     
 },{
+    versionKey: false,
     timestamps: true,
 })
 
@@ -106,7 +109,7 @@ app.get("/users/:id", async(req, res) =>{
 
 //update
 app.patch( "/users/:id", async(req, res) =>{
-
+   
     try {
         const user = await User.findByIdAndUpdate(req.params.id, req.body)
         return res.status(200).send({user : user})
@@ -150,7 +153,37 @@ app.post("/books", async(req, res) =>{
     }
 })
 
+//getting single item
+app.get("/books/:id", async(req, res) =>{
 
+    try {
+        const book = await Books.findById(req.params.id)
+        return res.status(200).send(book)
+    } catch (error) {
+        return res.status(500).send({message: error.message})
+    }
+})
+
+//update
+app.patch( "/books/:id", async(req, res) =>{
+   
+    try {
+        const book = await Books.findByIdAndUpdate(req.params.id, req.body)
+        return res.status(200).send(book)
+    } catch (error) {
+        return res.status(500).send({message: error.message})
+    }
+})
+//delete
+app.delete("/books/:id", async(req, res) =>{
+    try {
+        const book = await Books.findByIdAndDelete(req.params.id)
+        return res.status(200).send(book)
+    } catch (error) {
+        return res.status(500).send({message: error.message})
+    }
+
+})
 //section crud
 app.get("/section", async(req, res) =>{
 
@@ -171,6 +204,64 @@ app.post("/section", async(req, res) =>{
         const user = await Section.create(req.body)
         return res.status(201).send()
 
+    } catch (error) {
+        return res.status(500).send({message: error.message})
+    }
+})
+
+//author crud
+app.get("/author", async(req, res) =>{
+
+    try {
+        const author = await Author.find().lean().exec()
+
+        return res.status(200).send({author : author})
+
+    } catch (error) {
+        return res.status(500).send({message: "went wrong"})
+    }
+})
+
+app.post("/author", async(req, res) =>{
+
+    try {
+        const author = await Author.create(req.body)
+
+        return res.status(200).send({author : author})
+
+    } catch (error) {
+        return res.status(500).send({message: "went wrong"})
+    }
+})
+
+//single item
+app.get("/author/:id", async(req, res) =>{
+
+    try {
+        const author = await Author.findById(req.params.id)
+        return res.status(200).send(author)
+    } catch (error) {
+        return res.status(500).send({message: error.message})
+    }
+})
+
+app.patch( "/author/:id", async(req, res) =>{
+   
+    try {
+        const author = await Author.findByIdAndUpdate(req.params.id, req.body,{
+            new: true
+        })
+        return res.status(200).send(author)
+    } catch (error) {
+        return res.status(500).send({message: error.message})
+    }
+})
+
+app.patch( "/author/:id", async(req, res) =>{
+   
+    try {
+        const author = await Author.findByIdAndDelete(req.params.id)
+        return res.status(200).send(author)
     } catch (error) {
         return res.status(500).send({message: error.message})
     }

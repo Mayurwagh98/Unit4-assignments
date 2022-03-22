@@ -1,6 +1,6 @@
 const express = require("express")
 
-const User = require("../models/users")
+const User = require("../models/user.model")
 
 //user crud
 app.get("/users", async(req, res) =>{

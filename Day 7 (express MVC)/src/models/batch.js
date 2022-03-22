@@ -9,6 +9,6 @@ const batchSchema = new mongoose.Schema({
 })
 
 //batch model
-const Batch = mongoose.model("batch", batchSchema)
+const Batch = mongoose.model("batchId", batchSchema)
 
 model.exports = Batch
